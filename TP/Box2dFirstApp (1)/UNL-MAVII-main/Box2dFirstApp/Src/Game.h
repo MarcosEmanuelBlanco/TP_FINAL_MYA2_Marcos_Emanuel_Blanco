@@ -21,7 +21,7 @@ private:
 	Event* evento;
 	// Textos para el Menu y la interfaz.
 	Text
-		textoMenuInicio[3],
+		textoMenuInicio[7],
 		textoNivelSuperado,
 		textoSinMunicion,
 		textReinicio,

@@ -58,27 +58,27 @@ void Game::Loop() {
 
 void Game::InicializarFisicas() {
 	// Inicializamos el mundo con la gravedad por defecto.
-	phyWorld = new b2World(b2Vec2(0.0f, 10.0f));
+	phyWorld = new b2World(b2Vec2(0.0f, 5.0f));
 
 	// Creamos el renderer de debug y le seteamos las banderas para que dibuje TODO.
 	debugRender = new SFMLRenderer(wnd);
 	debugRender->SetFlags(UINT_MAX);
 	phyWorld->SetDebugDraw(debugRender);
 
-	BodyTecho = Box2DHelper::CreateRectangularStaticBody(phyWorld, 800.0f, 40.0f);
+	BodyTecho = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 800.0f, 40.0f, 0.0f, 0.0f, 400.0f);
 	BodyTecho->SetTransform(b2Vec2(400.f, 0.f), 0.0f);
 
 	for (int i = 0; i < 2; i++) {
-		BodyMuros[i] = Box2DHelper::CreateRectangularStaticBody(phyWorld, 40.0f, 600.0f);
+		BodyMuros[i] = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 40.0f, 600.0f, 0.0f, 0.0f, 400.0f);
 	}
 
 	BodyMuros[0]->SetTransform(b2Vec2(0.0f, 300.0f), 0.0f);
 	BodyMuros[1]->SetTransform(b2Vec2(800.0f, 300.0f), 0.0f);
 
-	BodySuelo = Box2DHelper::CreateRectangularStaticBody(phyWorld, 800.0f, 40.0f);
+	BodySuelo = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 800.0f, 40.0f, 0.0f, 0.0f, 400.0f);
 	BodySuelo->SetTransform(b2Vec2(400.f, 620.f), 0.0f);
 
-	BodyPad = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 100.0f, 20.0f, 0.0f, 0.0f, 1000.0f);
+	BodyPad = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 100.0f, 20.0f, 0.0f, 0.0f, 50.0f);
 	BodyPad->SetTransform(b2Vec2(400.0f, 560.0f), 0.0f);
 
 	BodyPisoCanasta = Box2DHelper::CreateRectangularStaticBody(phyWorld, 120.0f, 10.0f);
@@ -97,7 +97,7 @@ void Game::InicializarFisicas() {
 	BodyBordeDerCanasta->SetTransform(b2Vec2(474.0f, 235.0f), 10.0f);						//}
 
 	for (int i = 0; i < 2; i++) {
-		BodyRebotines[i] = Box2DHelper::CreateCircularDynamicBody(phyWorld, 20.0f, 1.0f, 0.0f, 50.0f);			//}
+		BodyRebotines[i] = Box2DHelper::CreateCircularDynamicBody(phyWorld, 20.0f, 1.0f, 0.0f, 25.0f);			//}
 	}																											//}
 																												//}
 	BodyRebotines[0]->SetTransform(b2Vec2(40.0f, 300.0f), 0.0f);												//}
@@ -110,7 +110,7 @@ void Game::InicializarFisicas() {
 		,BodyRebotines[1], BodyRebotines[1]->GetWorldCenter(), 5.0f, 0.0f, 1.0f);								//}
 	
 	for (int i = 0; i < 2; i++) {
-		BodyPelotas[i] = Box2DHelper::CreateCircularDynamicBody(phyWorld, 20.0f, 1.0f, 0.0f, 50.0f);			//}
+		BodyPelotas[i] = Box2DHelper::CreateCircularDynamicBody(phyWorld, 20.0f, 1.0f, 0.0f, 100.0f);			//}
 	}																											//}
 																												//} Obstáculo dinámico que empezará a rebotar 
 	BodyPelotas[0]->SetTransform(b2Vec2(60.0f, 600.0f), 0.0f);													//} si lo toca algo que no sea el pad.
@@ -152,7 +152,7 @@ void Game::DibujarComponentes() {
 		if (nivelActual == 0)
 		{
 			wnd->draw(*SpriteFondoMenu);
-			for (int i = 0; i < 3; i++) { wnd->draw(textoMenuInicio[i]); }
+			for (int i = 0; i < 7; i++) { wnd->draw(textoMenuInicio[i]); }
 			wnd->draw(*SpriteCursor);
 		}
 		break;
@@ -317,7 +317,7 @@ void Game::ProcesarEventos() {
 			if (totalDisparos < 5 && habilitarDisparo) {	// Si se presionó Enter anteriormente y aún hay munición...
 
 				ragdolls[totalDisparos] = new Ragdoll({ BodyPad->GetPosition().x,BodyPad->GetPosition().y - 60.f }, *phyWorld); // Se toma la posición del pad y el mundo activo para generar el ragdoll allí.
-				ragdolls[totalDisparos]->AplicarFuerza({ (posicion_mc.x - BodyPad->GetPosition().x) * 25,(posicion_mc.y - BodyPad->GetPosition().y) * 25 }); /* Usando la posición del ratón en el mundo menos la del pad(sin eso queda flotando sobre el pad),
+				ragdolls[totalDisparos]->AplicarFuerza({ (posicion_mc.x - BodyPad->GetPosition().x) * 200,(posicion_mc.y - BodyPad->GetPosition().y) * 200 }); /* Usando la posición del ratón en el mundo menos la del pad(sin eso queda flotando sobre el pad),
 																																								se calcula la fuerza del tiro.*/
 				totalDisparos++; // El total se incrementa...
 				auxMunicion--;	 // ...y la variable para el texto se reduce...
@@ -344,11 +344,11 @@ void Game::ProcesarEventos() {
 			}
 			// El movimiento y la rotación del pad, tomando la posición y rotación actual del mismo e incrementándolas o reduciéndolas al presionar la tecla correspondiente.
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
-				BodyPad->SetTransform(b2Vec2(BodyPad->GetPosition().x - 15.0f, BodyPad->GetPosition().y), BodyPad->GetAngle());
+				BodyPad->SetTransform(b2Vec2(BodyPad->GetPosition().x - 30.0f, BodyPad->GetPosition().y), BodyPad->GetAngle());
 				break;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::D)) {
-				BodyPad->SetTransform(b2Vec2(BodyPad->GetPosition().x + 15.0f, BodyPad->GetPosition().y), BodyPad->GetAngle());
+				BodyPad->SetTransform(b2Vec2(BodyPad->GetPosition().x + 30.0f, BodyPad->GetPosition().y), BodyPad->GetAngle());
 				break;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Q)) {
@@ -415,11 +415,15 @@ void Game::DefinirStrings() {
 	textoMenuInicio[0].setString("Ragkanoid");
 	textoMenuInicio[1].setString("Jugar");
 	textoMenuInicio[2].setString("Salir");
-	textoNivelSuperado.setString("Nivel completado");
-	textoSinMunicion.setString("Te quedaste sin munición. Empezá a ponerte creativo o");
-	textReinicio.setString("pulsá R para reiniciar el juego.");
-	textoJugarDeNuevo.setString("Juego completado Pulsá R para volver a jugar");
-	textoContinuar.setString("Pulsá Enter para continuar");
+	textoMenuInicio[3].setString("Controles: a y D para movEr el pad, Q y e para rotar,");
+	textoMenuInicio[4].setString("LMB para disparar, R para rEiniciar.");
+	textoMenuInicio[5].setString("ObjEtivo: mEtEr un muñEco En El cEsto para pasar ");
+	textoMenuInicio[6].setString("El nivEl. aprovEchá los obstáculos que rEbotan.");
+	textoNivelSuperado.setString("NivEl complEtado");
+	textoSinMunicion.setString("TE quEdastE sin munición. empEzá a ponErtE crEativo o");
+	textReinicio.setString("pulsá R para rEiniciar El juEgo.");
+	textoJugarDeNuevo.setString("JuEgo complEtado Pulsá R para volvEr a jugar");
+	textoContinuar.setString("Pulsá entEr para continuar");
 	textoMunicion.setString("Munición: " + to_string(auxMunicion));
 }
 
@@ -450,7 +454,7 @@ void Game::ConfigurarTextos() {
 	textoMunicion.setPosition(50.0f, 50.0f);
 
 	//0: Título, 1: Jugar, 2: Salir 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 7; i++) {
 		textoMenuInicio[i].setFont(fuente);
 	}
 	textoMenuInicio[0].setPosition(100.0f, 100.f);
@@ -459,7 +463,18 @@ void Game::ConfigurarTextos() {
 	textoMenuInicio[1].setCharacterSize(55);
 	textoMenuInicio[2].setPosition(50.f, 320.f);
 	textoMenuInicio[2].setCharacterSize(55);
-
+	textoMenuInicio[3].setPosition(1.f, 400.f);
+	textoMenuInicio[3].setCharacterSize(20);
+	textoMenuInicio[3].setFillColor(Color::Red);
+	textoMenuInicio[4].setPosition(1.f, 420.f);
+	textoMenuInicio[4].setCharacterSize(20);
+	textoMenuInicio[4].setFillColor(Color::Red);
+	textoMenuInicio[5].setPosition(1.f, 550.f);
+	textoMenuInicio[5].setCharacterSize(20);
+	textoMenuInicio[5].setFillColor(Color::Red);
+	textoMenuInicio[6].setPosition(1.f, 570.f);
+	textoMenuInicio[6].setCharacterSize(20);
+	textoMenuInicio[6].setFillColor(Color::Red);
 }
 
 Game::~Game(void)
