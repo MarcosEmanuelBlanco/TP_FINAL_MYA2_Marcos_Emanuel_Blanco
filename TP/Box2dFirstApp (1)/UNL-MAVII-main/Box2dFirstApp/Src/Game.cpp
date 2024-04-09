@@ -58,27 +58,27 @@ void Game::Loop() {
 
 void Game::InicializarFisicas() {
 	// Inicializamos el mundo con la gravedad por defecto.
-	phyWorld = new b2World(b2Vec2(0.0f, 5.0f));
+	phyWorld = new b2World(b2Vec2(0.0f, 6.0f));
 
 	// Creamos el renderer de debug y le seteamos las banderas para que dibuje TODO.
 	debugRender = new SFMLRenderer(wnd);
 	debugRender->SetFlags(UINT_MAX);
 	phyWorld->SetDebugDraw(debugRender);
 
-	BodyTecho = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 800.0f, 40.0f, 0.0f, 0.0f, 400.0f);
+	BodyTecho = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 800.0f, 40.0f, 0.0f, 0.0f, 1000.0f);
 	BodyTecho->SetTransform(b2Vec2(400.f, 0.f), 0.0f);
 
 	for (int i = 0; i < 2; i++) {
-		BodyMuros[i] = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 40.0f, 600.0f, 0.0f, 0.0f, 400.0f);
+		BodyMuros[i] = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 40.0f, 600.0f, 0.0f, 0.0f, 1000.0f);
 	}
 
 	BodyMuros[0]->SetTransform(b2Vec2(0.0f, 300.0f), 0.0f);
 	BodyMuros[1]->SetTransform(b2Vec2(800.0f, 300.0f), 0.0f);
 
-	BodySuelo = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 800.0f, 40.0f, 0.0f, 0.0f, 400.0f);
+	BodySuelo = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 800.0f, 40.0f, 0.0f, 0.0f, 1000.0f);
 	BodySuelo->SetTransform(b2Vec2(400.f, 620.f), 0.0f);
 
-	BodyPad = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 100.0f, 20.0f, 0.0f, 0.0f, 50.0f);
+	BodyPad = Box2DHelper::CreateRectangularDynamicBody(phyWorld, 100.0f, 20.0f, 0.0f, 0.0f, 1000.0f);
 	BodyPad->SetTransform(b2Vec2(400.0f, 560.0f), 0.0f);
 
 	BodyPisoCanasta = Box2DHelper::CreateRectangularStaticBody(phyWorld, 120.0f, 10.0f);
@@ -110,7 +110,7 @@ void Game::InicializarFisicas() {
 		,BodyRebotines[1], BodyRebotines[1]->GetWorldCenter(), 5.0f, 0.0f, 1.0f);								//}
 	
 	for (int i = 0; i < 2; i++) {
-		BodyPelotas[i] = Box2DHelper::CreateCircularDynamicBody(phyWorld, 20.0f, 1.0f, 0.0f, 100.0f);			//}
+		BodyPelotas[i] = Box2DHelper::CreateCircularDynamicBody(phyWorld, 20.0f, 5.0f, 0.0f, 100.0f);			//}
 	}																											//}
 																												//} Obstáculo dinámico que empezará a rebotar 
 	BodyPelotas[0]->SetTransform(b2Vec2(60.0f, 600.0f), 0.0f);													//} si lo toca algo que no sea el pad.

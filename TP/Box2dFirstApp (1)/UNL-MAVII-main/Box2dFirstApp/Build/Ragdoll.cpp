@@ -28,7 +28,12 @@ Ragdoll::Ragdoll(Vector2f pos, b2World& world) { // La posición y mundo en los p
 	for (int i = 0; i < 6; i++)
 	{
 		fixDefPart[i].shape = &ragShape[i];	//}
-		fixDefPart[i].density = 8.0f;		//} Se fijan los parámetros para las partes.
+		fixDefPart[0].density = 24.0f;
+		fixDefPart[1].density = 1.0f;
+		fixDefPart[2].density = 1.0f;
+		fixDefPart[3].density = 1.0f;
+		fixDefPart[4].density = 1.0f;
+		fixDefPart[5].density = 1.0f;							//} Se fijan los parámetros para las partes.
 		fixDefPart[i].friction = 0.0f;		//}
 		fixDefPart[i].restitution = 0.0f;	//}
 
@@ -36,6 +41,8 @@ Ragdoll::Ragdoll(Vector2f pos, b2World& world) { // La posición y mundo en los p
 
 
 	}
+	
+
 	// Se crean las uniones:
 	jntDefRag[0].Initialize(ragPart[0], ragPart[1],									// Cuello
 		b2Vec2(ragPart[0]->GetPosition().x, ragPart[0]->GetPosition().y),
@@ -91,6 +98,6 @@ void Ragdoll::DibujarRagdoll(RenderWindow* window) {
 }
 
 void Ragdoll::AplicarFuerza(Vector2f mousePos) {
-	ragPart[0]->ApplyForceToCenter(b2Vec2(mousePos.x * 60000, mousePos.y * 60000), false); // Se aplica fuerza a la cabeza. La posición en el parámetro se toma al momento del disparo para calcular el ángulo.
+	ragPart[0]->ApplyForceToCenter(b2Vec2(mousePos.x * 120000, mousePos.y * 120000), false); // Se aplica fuerza a la cabeza. La posición en el parámetro se toma al momento del disparo para calcular el ángulo.
 }
 
